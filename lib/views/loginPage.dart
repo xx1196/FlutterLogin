@@ -1,7 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/views/signupPage.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:http/http.dart' as http;
 import '../widgets/bezierContainer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -60,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _submitButton() {
-    return Container(
+    Widget loginButton = Container(
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.symmetric(vertical: 15),
       alignment: Alignment.center,
@@ -82,6 +83,19 @@ class _LoginPageState extends State<LoginPage> {
         style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     );
+
+    Future getLogin() async {
+      http.Response response =
+      await http.post("http://167.71.112.221/loginRestFull/public/login");
+      debugPrint(response.body);
+    }
+
+    Widget onTapLoginButton = GestureDetector(
+      onTap: getLogin,
+      child: loginButton,
+    );
+
+    return onTapLoginButton;
   }
 
   Widget _divider() {
@@ -259,7 +273,7 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.centerRight,
                   child: Text('Forgot Password ?',
                       style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                 ),
                 _divider(),
                 _facebookButton(),
