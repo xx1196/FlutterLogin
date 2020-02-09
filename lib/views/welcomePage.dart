@@ -34,7 +34,7 @@ class _WelcomePageState extends State<WelcomePage> {
             ],
             color: Colors.white),
         child: Text(
-          'Login',
+          'Inicia sesión',
           style: TextStyle(fontSize: 20, color: Color(0xfff7892b)),
         ),
       ),
@@ -56,7 +56,7 @@ class _WelcomePageState extends State<WelcomePage> {
           border: Border.all(color: Colors.white, width: 2),
         ),
         child: Text(
-          'Register now',
+          'Registrate ahora',
           style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
@@ -69,7 +69,7 @@ class _WelcomePageState extends State<WelcomePage> {
         child: Column(
           children: <Widget>[
             Text(
-              'Quick login with Touch ID',
+              'Inicia sesión rapidamente con tu huella',
               style: TextStyle(color: Colors.white, fontSize: 17),
             ),
             SizedBox(
@@ -95,7 +95,7 @@ class _WelcomePageState extends State<WelcomePage> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-          text: 'd',
+          text: 'x',
           style: GoogleFonts.portLligatSans(
             textStyle: Theme.of(context).textTheme.display1,
             fontSize: 30,
@@ -104,11 +104,11 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
           children: [
             TextSpan(
-              text: 'ev',
+              text: 'x1',
               style: TextStyle(color: Colors.black, fontSize: 30),
             ),
             TextSpan(
-              text: 'rnz',
+              text: '96',
               style: TextStyle(color: Colors.white, fontSize: 30),
             ),
           ]),
