@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/views/signupPage.dart';
+import 'package:flutter_login/widgets/alertDialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+
 import '../widgets/bezierContainer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -84,10 +88,32 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    Future getLogin() async {
-      http.Response response =
-      await http.post("http://167.71.112.221/loginRestFull/public/login");
-      debugPrint(response.body);
+    Future<bool> getLogin() async {
+      try {
+        Map<String, String> headers = {'Accept': 'application/json'};
+        Map<String, String> body = {
+          'email': 'admin@playtechla.com',
+          'password': '123456'
+        };
+
+        http.Response response = await http.post(
+            "http://167.71.112.221/loginRestFull/public/login",
+            headers: headers,
+            body: body);
+
+        var message = response.body.contains('message');
+        var data = json.decode(response.body);
+
+        if (message) {
+          _showDialog('Algo ha pasado', data['message']);
+          return false;
+        } else {
+          _showDialog('todo bien', data['data']['access_token']);
+          return true;
+        }
+      } catch (err) {
+        _showDialog('Algo ha pasado', err.toString());
+      }
     }
 
     Widget onTapLoginButton = GestureDetector(
@@ -96,6 +122,20 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     return onTapLoginButton;
+  }
+
+  void _showDialog(String tittle, String message) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertWidget(
+          tittle: tittle,
+          message: message,
+        );
+      },
+    );
   }
 
   Widget _divider() {
