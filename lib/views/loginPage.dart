@@ -19,6 +19,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  TextEditingController emailController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
+  bool _isLogging = false;
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -40,7 +44,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
+  Widget _entryField(String title, TextEditingController textEditingController,
+      {bool isPassword = false}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -54,6 +59,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 10,
           ),
           TextField(
+              controller: textEditingController,
               obscureText: isPassword,
               decoration: InputDecoration(
                   border: InputBorder.none,
@@ -90,11 +96,15 @@ class _LoginPageState extends State<LoginPage> {
 
     Future<bool> getLogin() async {
       try {
+        String errors = '';
+        this._isLogging = true;
+        String email = emailController.text;
+        String password = passwordController.text;
         Map<String, String> headers = {'Accept': 'application/json'};
-        Map<String, String> body = {
-          'email': 'admin@playtechla.com',
-          'password': '123456'
-        };
+        Map<String, String> body = {'email': email, 'password': password};
+
+        print(email);
+        print(password);
 
         http.Response response = await http.post(
             "http://167.71.112.221/loginRestFull/public/login",
@@ -102,14 +112,20 @@ class _LoginPageState extends State<LoginPage> {
             body: body);
 
         var message = response.body.contains('message');
+        var error = response.body.contains('error');
         var data = json.decode(response.body);
-
+        this._isLogging = false;
+        print(data['data']);
         if (message) {
           _showDialog('Algo ha pasado', data['message']);
           return false;
+        } else if (error) {
+          if(data['data']['error']['email'] != null) errors += data['data']['error']['email'][0] + '\n';
+          if(data['data']['error']['password'] != null) errors += data['data']['error']['password'][0] + '\n';
+          _showDialog('Algo ha pasado', errors);
+          return false;
         } else {
           _showDialog('todo bien', data['data']['access_token']);
-          return true;
         }
       } catch (err) {
         _showDialog('Algo ha pasado', err.toString());
@@ -118,7 +134,11 @@ class _LoginPageState extends State<LoginPage> {
 
     Widget onTapLoginButton = GestureDetector(
       onTap: getLogin,
-      child: loginButton,
+      child: _isLogging
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : loginButton,
     );
 
     return onTapLoginButton;
@@ -278,8 +298,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget _emailPasswordWidget() {
     return Column(
       children: <Widget>[
-        _entryField("Email"),
-        _entryField("Password", isPassword: true),
+        _entryField("Email", this.emailController),
+        _entryField("Password", this.passwordController, isPassword: true),
       ],
     );
   }
