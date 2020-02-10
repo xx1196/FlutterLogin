@@ -6,6 +6,7 @@ import 'package:flutter_login/views/signupPage.dart';
 import 'package:flutter_login/widgets/alertDialog.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../widgets/bezierContainer.dart';
 
@@ -94,6 +95,18 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
+    _read(String key) async {
+      final prefs = await SharedPreferences.getInstance();
+      final value = prefs.getString(key);
+      print('read: $value');
+      return value;
+    }
+
+    _save(String key, String value) async {
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString(key, value);
+    }
+
     Future<bool> getLogin() async {
       try {
         String errors = '';
@@ -102,9 +115,6 @@ class _LoginPageState extends State<LoginPage> {
         String password = passwordController.text;
         Map<String, String> headers = {'Accept': 'application/json'};
         Map<String, String> body = {'email': email, 'password': password};
-
-        print(email);
-        print(password);
 
         http.Response response = await http.post(
             "http://167.71.112.221/loginRestFull/public/login",
@@ -115,17 +125,25 @@ class _LoginPageState extends State<LoginPage> {
         var error = response.body.contains('error');
         var data = json.decode(response.body);
         this._isLogging = false;
-        print(data['data']);
+
+        _save('access_token', data['data']['access_token']);
+
+        for (var permission in data['data']['permissions']) {
+          _save(permission, permission);
+        }
+
         if (message) {
           _showDialog('Algo ha pasado', data['message']);
           return false;
         } else if (error) {
-          if(data['data']['error']['email'] != null) errors += data['data']['error']['email'][0] + '\n';
-          if(data['data']['error']['password'] != null) errors += data['data']['error']['password'][0] + '\n';
+          if (data['data']['error']['email'] != null)
+            errors += data['data']['error']['email'][0] + '\n';
+          if (data['data']['error']['password'] != null)
+            errors += data['data']['error']['password'][0] + '\n';
           _showDialog('Algo ha pasado', errors);
           return false;
         } else {
-          _showDialog('todo bien', data['data']['access_token']);
+          // enviar a pantalla de usurio
         }
       } catch (err) {
         _showDialog('Algo ha pasado', err.toString());
@@ -133,12 +151,10 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     Widget onTapLoginButton = GestureDetector(
-      onTap: getLogin,
-      child: _isLogging
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : loginButton,
+      onTap: () async {
+        getLogin();
+      },
+      child: loginButton,
     );
 
     return onTapLoginButton;
