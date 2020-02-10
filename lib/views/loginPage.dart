@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_login/views/homePage.dart';
 import 'package:flutter_login/views/signupPage.dart';
 import 'package:flutter_login/widgets/alertDialog.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -143,7 +144,8 @@ class _LoginPageState extends State<LoginPage> {
           _showDialog('Algo ha pasado', errors);
           return false;
         } else {
-          // enviar a pantalla de usurio
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomePage()));
         }
       } catch (err) {
         _showDialog('Algo ha pasado', err.toString());
