@@ -132,26 +132,23 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage('https://images.unsplash.com/photo-1546180147-af9074ff24aa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
-                  fit: BoxFit.cover,
-                )
+                  image: DecorationImage(
+                image: NetworkImage(
+                    'https://images.unsplash.com/photo-1546180147-af9074ff24aa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'),
+                fit: BoxFit.cover,
+              )),
+            ),
+            Ink(
+              color: Colors.indigo,
+              child: ListTile(
+                title: Text(
+                  'Crear nuevo usuario',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
               ),
-            ),
-            ListTile(
-              title: Text('Item 1'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: Text('Item 2'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
             ),
           ],
         ),
